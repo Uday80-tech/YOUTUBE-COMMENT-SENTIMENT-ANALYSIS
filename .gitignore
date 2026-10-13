@@ -1,3 +1,6 @@
 /Backend/.env
 README.md
 /Backend/model_and_utils/model.pkl
+/Backend/Schemas/__pycache__/*
+/Backend/__pycache__/*
+/Backend/model_and_utils/__pycache__/*
