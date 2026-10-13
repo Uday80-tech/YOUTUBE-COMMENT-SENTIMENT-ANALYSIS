@@ -1,4 +1,15 @@
-import 
+import pickle
 
-def predict_sentiment(comment):
-    pass
+
+model = pickle.load(open("model.pkl" , "rb"))
+
+
+
+
+def predict_sentiment(comment : list[str]):
+    if comment:
+        sentiments = model.predict(comment)
+        return sentiments
+    else:
+        return ["no comments found"]
+    
