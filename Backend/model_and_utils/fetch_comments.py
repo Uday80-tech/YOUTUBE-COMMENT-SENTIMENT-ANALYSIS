@@ -1,13 +1,18 @@
 import os
 import requests
 import streamlit as st
+import pickle
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 
 def fetch_comments(video_id :str) -> list[str]:
     api_key = os.getenv("youtubev3_api")
 
     if not api_key:
-        raise ValueError("api key not found")
+        raise ValueError("youtubev3_api key not found")
 
     url = "https://www.googleapis.com/youtube/v3/commentThreads"
 
@@ -45,8 +50,25 @@ def fetch_comments(video_id :str) -> list[str]:
     return comments
 
 
+import re
+
+def remove_special(text):
+    text = str(text)
+    text = re.sub(r"[^a-zA-Z0-9\s]", " ", text)
+    return text.lower()
+
+def clean_text(x):
+    return x.apply(remove_special)
+
+
+model = pickle.load(open("model.pkl" ,"rb"))
+
 id = st.text_input("enter  youtube video id")
+
 data = fetch_comments(id)
-st.write(data)
-st.write(len(data))
+
+sentiment = model.predict(data)
+
+st.write([[data[i], sentiment[i]] for i in range(len(data))])
+
         
