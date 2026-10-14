@@ -76,12 +76,4 @@ def fetch_comments(video_id :str) -> list[str]:
 
         if not page_token:
             break
-    return comments
-
-
-
-
-
-
-
-        
+    return comments 
