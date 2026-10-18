@@ -4,3 +4,4 @@ README.md
 /Backend/Schemas/__pycache__/*
 /Backend/__pycache__/*
 /Backend/model_and_utils/__pycache__/*
+/frontend/__pycache__/*

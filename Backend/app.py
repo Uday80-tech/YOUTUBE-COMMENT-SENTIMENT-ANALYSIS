@@ -21,3 +21,4 @@ def predict(url : Input_URL):
     result = [commentsentiment(comment=comment , sentiment= sentiment)
               for comment , sentiment in zip(comments ,sentiments) ] 
     return JSONResponse(status_code=200,content=jsonable_encoder({"result": result}))
+

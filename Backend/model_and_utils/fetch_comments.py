@@ -77,3 +77,42 @@ def fetch_comments(video_id :str) -> list[str]:
         if not page_token:
             break
     return comments 
+
+
+
+
+def get_video_details(video_id: str) -> dict:
+    api_key = os.getenv("youtubev3_api")
+
+    url = "https://www.googleapis.com/youtube/v3/videos"
+
+    params = {
+        "part": "snippet",
+        "id": video_id,
+        "key": api_key
+    }
+
+    try:
+        response = requests.get(url, params=params, timeout=15)
+        response.raise_for_status()
+        items = response.json().get("items", [])
+
+        if not items:
+            raise HTTPException(
+                status_code=404,
+                detail="Video details not found."
+            )
+
+        snippet = items[0]["snippet"]
+
+        return {
+            "title": snippet["title"],
+            "channel_name": snippet["channelTitle"],
+            "upload_date": snippet["publishedAt"][:10]
+        }
+
+    except requests.RequestException:
+        raise HTTPException(
+            status_code=502,
+            detail="Unable to retrieve YouTube video details."
+        )
