@@ -42,7 +42,7 @@ if st.session_state.page == "home":
             try:
                 #=====================================connection with fastapi=================================================
 
-                url = "http://127.0.0.1:8000/predict"
+                url = "https://youtube-sentiment-backend.onrender.com/predict"
 
                 with st.spinner("Analyzing YouTube comments..."):
                     response = requests.put(url=url , json={"url" : video_url}  , timeout= 60)
