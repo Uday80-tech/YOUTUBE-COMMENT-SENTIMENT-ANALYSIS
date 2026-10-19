@@ -30,7 +30,7 @@ def fetch_comments(video_id :str) -> list[str]:
             params["pageToken"] = page_token
 
         try:
-            response = requests.get(url ,params=params , timeout=30)
+            response = requests.get(url ,params=params , timeout=100)
             response.raise_for_status()
 
         except requests.HTTPError as exc:
@@ -93,7 +93,7 @@ def get_video_details(video_id: str) -> dict:
     }
 
     try:
-        response = requests.get(url, params=params, timeout=15)
+        response = requests.get(url, params=params, timeout=100)
         response.raise_for_status()
         items = response.json().get("items", [])
 

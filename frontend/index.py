@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 import plotly.express as px
+from datetime import date
 
 st.set_page_config(
     page_title="YouTube Sentiment Analysis",
@@ -30,6 +31,9 @@ if st.session_state.page == "home":
     if "video_url" not in st.session_state:
         st.session_state.video_url = ""
 
+    if "meta_data" not in st.session_state:
+            st.session_state.meta_data = None
+
     st.session_state.video_url = video_url
 
     if st.button("Analyze"):
@@ -41,14 +45,16 @@ if st.session_state.page == "home":
                 url = "http://127.0.0.1:8000/predict"
 
                 with st.spinner("Analyzing YouTube comments..."):
-                    response = requests.put(url=url , json={"url" : video_url}  , timeout= 35)
+                    response = requests.put(url=url , json={"url" : video_url}  , timeout= 60)
 
                 if response.status_code == 200:
                     result = response.json().get("result" , [])
+                    meta_data = response.json().get("video_info" , {})
                     st.balloons()
 
                     df = pd.DataFrame(result)
                     st.session_state.data = df
+                    st.session_state.meta_data = meta_data
 
                     st.session_state.page = "dashboard"
                     st.rerun()
@@ -108,6 +114,29 @@ if st.session_state.page == "dashboard":
     col1 , col2 ,col3= st.columns(3)
     col1.video(st.session_state.video_url)  #col1 video
 
+#======================================================col2 meta data=========================================================
+
+    meta_data = st.session_state.meta_data
+
+    with col2:
+        with st.container(border=True):
+            st.caption("📺 VIDEO OVERVIEW")
+
+            st.markdown(meta_data.get("title", "Untitled video"))
+
+            st.divider()
+
+            st.caption("📡 YOUTUBE CHANNEL")
+            st.markdown(f"**{meta_data.get('channel_name', 'Unknown channel')}**")
+
+            st.caption("📅 PUBLISHED ON")
+            upload_date = meta_data.get("upload_date", "")
+            try:
+                formatted_date = date.fromisoformat(upload_date).strftime("%d %B %Y")
+            except (ValueError, TypeError):
+                formatted_date = upload_date or "Unknown date"
+
+            st.markdown(f"**{formatted_date}**")
 
 # ===================================================col3 Plotly Chart=============================================================
     fig = px.pie(
@@ -179,9 +208,3 @@ if st.session_state.page == "dashboard":
                     st.error(sentiment.capitalize())
                 else:
                     st.warning(sentiment.capitalize())
-
-
-
-
-        
-
